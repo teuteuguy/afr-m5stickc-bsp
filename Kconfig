@@ -1,0 +1,358 @@
+menu "M5Stick-C"
+
+config ESP_IDF_VERSION_BEFORE_V3_3
+    bool "Compatible with ESP-IDF older than v3.3"
+    default n
+    help
+        Use backported libraries for versions of ESP-IDF older than v3.3.
+
+        For ESP-IDF v3.3 or newer, this option should not be checked.
+
+menu "AXP192 - DEFAULT Register Init values"
+
+menu "AXP192_10H - EXTEN & DC-DC2 output control"
+
+config AXP192_10H_BIT2
+    bool "Turn ON EXTEN"
+    default y
+    help
+        0: shut down
+        1: turn on
+
+config AXP192_10H_BIT0
+    bool "Turn ON DC-DC2"
+    default y
+    help
+        0: shut down
+        1: turn on
+
+endmenu
+
+menu "AXP192_12H - Power supply output control"
+
+config AXP192_12H_BIT6
+    bool "Turn ON EXTEN"
+    default y
+    help
+        0: shut down
+        1: turn on
+        
+config AXP192_12H_BIT4
+    bool "Turn ON DC-DC2"
+    default y
+    help
+        0: shut down
+        1: turn on
+
+config AXP192_12H_BIT3
+    bool "Turn ON LDO3"
+    default y
+    help
+        0: shut down
+        1: turn on
+
+config AXP192_12H_BIT2
+    bool "Turn ON LDO2"
+    default n
+    help
+        0: shut down
+        1: turn on
+
+config AXP192_12H_BIT1
+    bool "Turn ON DC-DC3"
+    default y
+    help
+        0: shut down
+        1: turn on
+
+config AXP192_12H_BIT0
+    bool "Turn ON DC-DC1"
+    default y
+    help
+        0: shut down
+        1: turn on
+
+endmenu
+
+menu "AXP192_28H - LDO2 / 3 output voltage setting"
+
+config AXP192_28H_BIT7_4
+    hex "LDO2 Output Voltage"
+    default 0xC
+    help
+        0xF - 3.3V
+        ... (100mV / Step)
+        0x0 - 1.8V        
+
+config AXP192_28H_BIT3_0
+    hex "LDO3 Output Voltage"
+    default 0xC
+    help
+        0xF - 3.3V
+        ... (100mV / Step)
+        0x0 - 1.8V        
+    
+endmenu
+
+menu "AXP192_30H - VBUS-IPSOUT path management"
+
+config AXP192_30H_BIT7
+    bool "Control VBUS Available VBUS-IPSOUT Channel"
+    default y
+    help
+        0: by N_VBUSEN ​​​​​​​​pin Decide whether to open this path
+        1: VBUS-IPSOUT Open access can be selected, regardless of N_VBUSEN status
+
+config AXP192_30H_BIT6
+    bool "Control VBUS VHOLD Pressure limiting"
+    default y
+    help
+        0: Any pressure
+        1: Pressure limiting
+
+config AXP192_30H_BIT5_3
+    hex "VHOLD Setup"
+    default 0x5
+    help
+        0x0: 4.0V ; 0x1: 4.1V ; 0x2: 4.2V ; 0x3: 4.3V
+        0x4: 4.4V ; 0x5: 4.5V ; 0x6: 4.6V ; 0x7: 4.7V
+
+config AXP192_30H_BIT1
+    bool "Control VBUS Limiting"
+    default n
+    help
+        0: shut down
+        1: turn on
+
+config AXP192_30H_BIT0
+    bool "Control VBUS Limit"
+    default n
+    help
+        0: 500mA
+        1: 100mA
+    
+endmenu
+
+menu "AXP192_31H - VOFF Off voltage setting"
+
+config AXP192_31H_BIT3
+    bool "Enable Sleep Mode PWRON Press wakeup"
+    default n
+    help
+        0: Short press to wake up close function
+        1: Short press Open this wake-up function bit Automatic Clearing After writing 0 , So each into Sleep Former mode needs to write again 12
+
+config AXP192_31H_BIT2_0
+    hex "VOFF Setup"
+    default 0x0
+    help
+        0x0: 2.6V ; 0x1: 2.7V ; 0x2: 2.8V ; 0x3: 2.9V
+        0x4: 3.0V ; 0x5: 3.1V ; 0x6: 3.2V ; 0x7-3.3V
+    
+endmenu
+
+menu "AXP192_33H - Charge Control 1"
+
+config AXP192_33H_BIT7
+    bool "Enable Charging"
+    default y
+    help
+        0: shut down
+        1: turn on
+
+config AXP192_33H_BIT6_5
+    hex "Charging target voltage"
+    default 0x2
+    help
+        0x0: 4.1V
+        0x1: 4.15V
+        0x2: 4.2V
+        0x3: 4.36V
+    
+config AXP192_33H_BIT4
+    bool "Charging end current setting"
+    default n
+    help
+        0: The charging current is less than 10% When the end of charging set value
+        1: The charging current is less than 15% When the end of charging set value
+    
+config AXP192_33H_BIT3_0
+    hex "Charging current setting internal passage"
+    default 0x1
+    help
+        0x0: 100mA ; 0x1: 190mA ; 0x2: 280mA ; 0x3: 360mA ; 0x4: 450mA
+        0x5: 550mA ; 0x6: 630mA ; 0x7: 700mA ; 0x8: 780mA ; 0x9: 880mA
+        0xA: 960mA ; 0xB: 1000mA ; 0xC: 1080mA ; 0xD: 1160mA ; 0xE: 1240mA ; 0xF: 1320mA
+  
+    
+endmenu
+
+menu "AXP192_35H - Backup battery charging control"
+
+config AXP192_35H_BIT7
+    bool "Control A spare battery"
+    default y
+    help
+        0: shut down
+        1: turn on
+
+config AXP192_35H_BIT6_5
+    hex "Backup battery charging target voltage setting"
+    default 0x1
+    help
+        0x0: 3.1V ; 0x1: 3.0V ; 0x2: 3.0V ; 0x3: 2.5V
+    
+config AXP192_35H_BIT1_0
+    hex "Backup battery charging current setting"
+    default 0x2
+    help
+        0x0: 50uA ; 0x1: 100uA ; 0x2: 200uA ; 0x3: 400uA
+    
+endmenu
+
+menu "AXP192_36H - PEK Key Parameters"
+
+config AXP192_36H_BIT7_6
+    hex "Boot time"
+    default 0x0
+    help
+        0x00: 128ms ; 0x01: 512ms ; 0x10: 1s ; 0x11: 2s
+
+config AXP192_36H_BIT5_4
+    hex "Long time"
+    default 0x0
+    help
+        0x0: 1s ; 0x1: 1.5s ; 0x2: 2s ; 0x3: 2.5s
+    
+config AXP192_36H_BIT3
+    bool "Automatic shutdown"
+    default y
+    help
+        Automatic shutdown function is set longer than the time duration shutdown button        
+    
+config AXP192_36H_BIT2
+    bool "Complete PWROK Signal Delay"
+    default y
+    help
+        0: 32ms
+        1: 64ms
+    
+config AXP192_36H_BIT1_0
+    hex "Long set off"
+    default 0x0
+    help
+        0x0: 4s ; 0x1: 6s ; 0x2 8s ; 0x3: 10s
+
+endmenu
+
+menu "AXP192_39H - VHTF-charge Charging the battery temperature threshold setting"
+
+config AXP192_39H_BIT7_0
+    hex "Battery charging threshold setting"
+    default 0xFC
+    help
+        N * 10H , when N = 1FH ,correspond 0.397V ; Voltage may correspond to 0V ~ 3.264V
+        VHTF-charge = N * 10H * 0.0008V
+
+endmenu
+
+menu "AXP192_82H - ADC Enable 1"
+
+config AXP192_82H_BIT7
+    bool "Enable Battery Voltage ADC"
+    default y
+    help
+        0: shut down
+        1: turn on
+
+config AXP192_82H_BIT6
+    bool "Enable Battery Current ADC"
+    default y
+    help
+        0: shut down
+        1: turn on
+    
+config AXP192_82H_BIT5
+    bool "Enable ACIN Voltage ADC"
+    default y
+    help
+        0: shut down
+        1: turn on
+    
+config AXP192_82H_BIT4
+    bool "Enable ACIN Current ADC"
+    default y
+    help
+        0: shut down
+        1: turn on
+    
+config AXP192_82H_BIT3
+    bool "Enable VBUS Voltage ADC"
+    default y
+    help
+        0: shut down
+        1: turn on
+
+config AXP192_82H_BIT2
+    bool "Enable VBUS Current ADC"
+    default y
+    help
+        0: shut down
+        1: turn on
+
+config AXP192_82H_BIT1
+    bool "Enable APS Voltage ADC"
+    default y
+    help
+        0: shut down
+        1: turn on
+
+config AXP192_82H_BIT0
+    bool "Enable TS PIN ADC Function"
+    default y
+    help
+        0: shut down
+        1: turn on
+
+    
+endmenu
+
+menu "AXP192_90H - GPIO0 feature set"
+
+config AXP192_90H_BIT2_0
+    hex "GPIO0 Pin feature set"
+    default 0x2
+    help
+        0x0: NMOS Open-drain output
+        0x1: Universal input function
+        0x2: Low Noise LDO
+        0x3: Retention
+        0x4: ADC Entry
+        0x5: Output Low
+        0x6-0x7: Floating
+
+endmenu
+
+menu "AXP192_B8H - Coulomb Gauge Control"
+
+config AXP192_B8H_BIT7
+    bool "Turn ON Coulometer"
+    default y
+
+config AXP192_B8H_BIT6
+    bool "Suspend Coulomb counting"
+    default n
+    help
+        1: Coulomb counting will be suspended, While this bit will be cleared from
+    
+config AXP192_B8H_BIT5
+    bool "Clear Coulomb meter"
+    default n
+    help
+        1: Coulomb Counter will be cleared, While this bit will be cleared from
+    
+endmenu
+
+endmenu
+
+endmenu
