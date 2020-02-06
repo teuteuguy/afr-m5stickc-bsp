@@ -1,7 +1,7 @@
 /**
  * m5stickc.c - ESP-IDF component to work with M5
  *
- * (C) 2019 - Pablo Bacho <pablo@pablobacho.com>
+ * (C) 2020 - Timothee Cruse <timothee.cruse@gmail.com>
  * This code is licensed under the MIT License.
  */
 
@@ -9,15 +9,14 @@
 
 static const char *TAG = "m5stickc";
 
-esp_event_loop_handle_t m5_event_loop;
+esp_event_loop_handle_t m5stickc_event_event_loop;
 
-esp_err_t m5_init(m5stickc_config_t * config) {
+esp_err_t M5StickCInit(m5stickc_config_t * config) {
     esp_err_t e;
     uint8_t error_count = 0;
 
-    m5event_init();
+    M5StickCEventInit();
 
-    // Init I²C
     i2c_config_t conf;
     conf.mode = I2C_MODE_MASTER;
     conf.sda_io_num = I2C_SDA_GPIO;
@@ -31,7 +30,7 @@ esp_err_t m5_init(m5stickc_config_t * config) {
         e = i2c_driver_install(I2C_NUM_0, I2C_MODE_MASTER, 0, 0, 0);
         if(e == ESP_OK) {
             // Init power management
-            e = m5power_init(&config->power);
+            e = M5StickCPowerInit(&config->power);
             if(e == ESP_OK) {
                 ESP_LOGD(TAG, "Power manager initialized");
             } else {
@@ -48,7 +47,7 @@ esp_err_t m5_init(m5stickc_config_t * config) {
     }
 
     // Init led
-    e = m5led_init();
+    e = M5StickCLedInit();
     if(e == ESP_OK) {
         ESP_LOGD(TAG, "Led initialized");
     } else {
@@ -57,7 +56,16 @@ esp_err_t m5_init(m5stickc_config_t * config) {
     }
 
     // Init button
-    e = m5button_init();
+    e = M5StickCButtonInit();
+    if(e == ESP_OK) {
+        ESP_LOGD(TAG, "Button initialized");
+    } else {
+        ESP_LOGE(TAG, "Error initializing button");
+        ++error_count;
+    }
+
+    // Init MPU6886
+    e = M5StickCMPU6886Init();
     if(e == ESP_OK) {
         ESP_LOGD(TAG, "Button initialized");
     } else {
@@ -66,7 +74,7 @@ esp_err_t m5_init(m5stickc_config_t * config) {
     }
 
     // Init display
-    e = m5display_init();
+    e = M5StickCDisplayInit();
     if(e == ESP_OK) {
         ESP_LOGD(TAG, "Display initialized");
     } else {

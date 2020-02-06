@@ -1,12 +1,12 @@
 /**
- * m5display.h
+ * m5stickc_display.h
  *
- * (C) 2019 - Pablo Bacho <pablo@pablobacho.com>
+ * (C) 2020 - Timothee Cruse <timothee.cruse@gmail.com>
  * This code is licensed under the MIT License.
  */
 
-#ifndef _M5DISPLAY_H_
-#define _M5DISPLAY_H_
+#ifndef _M5STICKC_DISPLAY_H_
+#define _M5STICKC_DISPLAY_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,13 +17,13 @@ extern "C" {
 #include "util/spi_master_lobo.h"
 #include "util/tftspi.h"
 #include "util/tft.h"
-#include "m5power.h"
-#include "m5button.h"
-#include "m5event.h"
+#include "m5stickc_power.h"
+#include "m5stickc_button.h"
+#include "m5stickc_event.h"
 
-#define M5DISPLAY_TYPE DISP_TYPE_ST7735S  /*!< Display type for display driver */
-#define M5DISPLAY_WIDTH 160               /*!< Display width in pixels after rotation */
-#define M5DISPLAY_HEIGHT 80               /*!< Display height in pixels after rotation */
+#define M5STICKC_DISPLAY_TYPE DISP_TYPE_ST7735S  /*!< Display type for display driver */
+#define M5STICKC_DISPLAY_WIDTH 160               /*!< Display width in pixels after rotation */
+#define M5STICKC_DISPLAY_HEIGHT 80               /*!< Display height in pixels after rotation */
 
 // Defines for global variables of the TFT Library
 #define TFT_ORIENTATION orientation
@@ -35,7 +35,7 @@ extern "C" {
 #define TFT_FONT_BACKGROUND _bg
 #define TFT_FONT_FOREGROUND _fg
 
-extern spi_lobo_device_handle_t m5display_spi;    /*!< SPI device handle */
+extern spi_lobo_device_handle_t m5stickc_display_spi;    /*!< SPI device handle */
 
 /**
  * @brief   Initialize display
@@ -43,7 +43,7 @@ extern spi_lobo_device_handle_t m5display_spi;    /*!< SPI device handle */
  * @return  ESP_OK success
  *          ESP_FAIL failed
  */
-esp_err_t m5display_init();
+esp_err_t M5StickCDisplayInit();
 
 /**
  * @brief   Set display backlight level
@@ -53,7 +53,7 @@ esp_err_t m5display_init();
  * @return  ESP_OK success
  *          ESP_FAIL failed
  */
-esp_err_t m5display_set_backlight_level(uint8_t backlight_level);
+esp_err_t M5StickCDisplaySetBacklightLevel(uint8_t backlight_level);
 
 /**
  * @brief   Turn display off
@@ -61,7 +61,7 @@ esp_err_t m5display_set_backlight_level(uint8_t backlight_level);
  * @return  ESP_OK success
  *          ESP_FAIL failed
  */
-esp_err_t m5display_off();
+esp_err_t M5StickCDisplayOff();
 
 /**
  * @brief   Turn display on
@@ -69,36 +69,36 @@ esp_err_t m5display_off();
  * @return  ESP_OK success
  *          ESP_FAIL failed
  */
-esp_err_t m5display_on();
+esp_err_t M5StickCDisplayOn();
 
 /**
  * @brief   Sets a timeout to turn display off
  *
- *          Display turns back on with button events or m5display_wakeup() function call.
+ *          Display turns back on with button events or M5StickCDisplayWakeup() function call.
  *
  * @param   timeout timeout in seconds
  * @return  ESP_OK success
  *          ESP_FAIL failed
  */
-esp_err_t m5display_timeout(uint32_t timeout);
+esp_err_t M5StickCDisplayTimeout(uint32_t timeout);
 
 /**
  * @brief   Turns display on and resets timeout timer
  */
-void m5display_wakeup();
+void M5StickCDisplayWakeup();
 
 /**
  * @brief   Callback for timeout to turn display off
  */
-void m5display_sleep();
+void M5StickCDisplaySleep();
 
 /**
  * @brief   Event handler for display. Not meant to be used by user program.
  */
-void m5display_event_handler(void * handler_arg, esp_event_base_t base, int32_t id, void * event_data);
+void M5StickCDisplayEventHandler(void * handler_arg, esp_event_base_t base, int32_t id, void * event_data);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // _M5DISPLAY_H_
+#endif // _M5STICKC_DISPLAY_H_

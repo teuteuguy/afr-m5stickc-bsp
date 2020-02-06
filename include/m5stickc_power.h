@@ -1,7 +1,7 @@
 /**
- * m5power.h
+ * m5stickc_power.h
  *
- * (C) 2019 - Pablo Bacho <pablo@pablobacho.com>
+ * (C) 2020 - Timothee Cruse <timothee.cruse@gmail.com>
  * This code is licensed under the MIT License.
  */
 
@@ -226,7 +226,7 @@ extern "C" {
 typedef struct {
     bool enable_lcd_backlight;
     uint8_t lcd_backlight_level;
-} m5power_config_t;
+} m5stickc_power_config_t;
 
 #define M5POWER_CONFIG_DEFAULT() { \
     .enable_lcd_backlight = true, \
@@ -239,7 +239,7 @@ typedef struct {
  * @return  ESP_OK success
  *          ESP_FAIL failed
  */
-esp_err_t m5power_init(m5power_config_t * config);
+esp_err_t M5StickCPowerInit(m5stickc_power_config_t * config);
 
 /**
  * @brief   Read content of register
@@ -251,7 +251,7 @@ esp_err_t m5power_init(m5power_config_t * config);
  *          ESP_FAIL failed
  *          ESP_ERR_NO_MEM out of memory
  */
-esp_err_t m5power_register_read(uint8_t register_address, uint8_t * register_content);
+esp_err_t M5StickCPowerRegisterRead(uint8_t register_address, uint8_t * register_content);
 
 /**
  * @brief   Write content of register. Will overwrite any previous content.
@@ -263,7 +263,7 @@ esp_err_t m5power_register_read(uint8_t register_address, uint8_t * register_con
  *          ESP_FAIL failed
  *          ESP_ERR_NO_MEM out of memory
  */
-esp_err_t m5power_register_write(uint8_t register_address, uint8_t register_content);
+esp_err_t M5StickCPowerRegisterWrite(uint8_t register_address, uint8_t register_content);
 
 /**
  * @brief   Set to 1 a selection of bits in a register. Will not change other bits.
@@ -275,7 +275,7 @@ esp_err_t m5power_register_write(uint8_t register_address, uint8_t register_cont
  *          ESP_FAIL failed
  *          ESP_ERR_NO_MEM out of memory
  */
-esp_err_t m5power_register_set_bits(uint8_t register_address, uint8_t bits_to_set);
+esp_err_t M5StickCPowerRegisterSetBits(uint8_t register_address, uint8_t bits_to_set);
 
 /**
  * @brief   Clear a selection of bits in a register. Will not change other bits.
@@ -287,7 +287,7 @@ esp_err_t m5power_register_set_bits(uint8_t register_address, uint8_t bits_to_se
  *          ESP_FAIL failed
  *          ESP_ERR_NO_MEM out of memory
  */
-esp_err_t m5power_register_clear_bits(uint8_t register_address, uint8_t bits_to_clear);
+esp_err_t M5StickCPowerRegisterClearBits(uint8_t register_address, uint8_t bits_to_clear);
 
 /**
  * @brief   Get VBat in V.
@@ -297,7 +297,7 @@ esp_err_t m5power_register_clear_bits(uint8_t register_address, uint8_t bits_to_
  * @return  ESP_OK success
  *          ESP_FAIL failed
  */
-esp_err_t m5power_get_vbat(uint16_t *vbat);
+esp_err_t M5StickCPowerGetVbat(uint16_t *vbat);
 
 /**
  * @brief   Get VAps in V.
@@ -307,7 +307,7 @@ esp_err_t m5power_get_vbat(uint16_t *vbat);
  * @return  ESP_OK success
  *          ESP_FAIL failed
  */
-esp_err_t m5power_get_vaps(uint16_t *vbat);
+esp_err_t M5StickCPowerGetVaps(uint16_t *vbat);
 
 /**
  * @brief   Set Sleep.
@@ -315,7 +315,7 @@ esp_err_t m5power_get_vaps(uint16_t *vbat);
  * @return  ESP_OK success
  *          ESP_FAIL failed
  */
-esp_err_t m5power_set_sleep(void);
+esp_err_t M5StickCPowerSetSleep(void);
 
 #ifdef __cplusplus
 }

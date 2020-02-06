@@ -1,12 +1,12 @@
 /**
- * m5led.h
+ * m5stickc_led.h
  *
- * (C) 2019 - Timothee Cruse (teuteuguy)
+ * (C) 2019 - Timothee Cruse <timothee.cruse@gmail.com>
  * This code is licensed under the MIT License.
  */
 
-#ifndef _M5LED_H_
-#define _M5LED_H_
+#ifndef _M5STICKC_LED_H_
+#define _M5STICKC_LED_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -14,11 +14,11 @@ extern "C" {
 #include "esp_system.h"
 #include "esp_log.h"
 
-#define M5LED_ON 0
-#define M5LED_OFF 1
+#define M5STICKC_LED_ON 0
+#define M5STICKC_LED_OFF 1
 
-#define M5LED_DEFAULT_STATE M5LED_OFF
-#define M5LED_GPIO          GPIO_NUM_10
+#define M5STICKC_LED_DEFAULT_STATE M5STICKC_LED_OFF
+#define M5STICKC_LED_GPIO          GPIO_NUM_10
 
 /**
  * @brief   Initialize led
@@ -26,7 +26,7 @@ extern "C" {
  * @return  ESP_OK success
  *          ESP_FAIL failed
  */
-esp_err_t m5led_init();
+esp_err_t M5StickCLedInit();
 
 /**
  * @brief   Check if led is on
@@ -34,7 +34,7 @@ esp_err_t m5led_init();
  * @return  false not on
  *          true otherwise on
  */
-bool m5led_is_on(void);
+bool M5StickCLedIsOn(void);
 
 /**
  * @brief   Set led.
@@ -43,7 +43,7 @@ bool m5led_is_on(void);
  * @return  ESP_OK success
  *          ESP_FAIL failed
  */
-esp_err_t m5led_set(bool state);
+esp_err_t M5StickCLedSet(bool state);
 
 /**
  * @brief   Toggle led.
@@ -51,10 +51,10 @@ esp_err_t m5led_set(bool state);
  * @return  ESP_OK success
  *          ESP_FAIL failed
  */
-esp_err_t m5led_toggle(void);
+esp_err_t M5StickCLedToggle(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // _M5BUTTON_H_
+#endif // _M5STICKC_LED_H_

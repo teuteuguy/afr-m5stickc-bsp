@@ -1,48 +1,48 @@
 /**
- * m5button.c
+ * m5stickc_button.c
  *
- * (C) 2019 - Pablo Bacho <pablo@pablobacho.com>
+ * (C) 2019 - Timothee Cruse <timothee.cruse@gmail.com>
  * This code is licensed under the MIT License.
  */
 
-#include "m5button.h"
+#include "m5stickc_button.h"
 
-static const char * TAG = "m5button";
+static const char * TAG = "m5stickc_button";
 
-ESP_EVENT_DEFINE_BASE(M5BUTTON_A_EVENT_BASE);
-ESP_EVENT_DEFINE_BASE(M5BUTTON_B_EVENT_BASE);
+ESP_EVENT_DEFINE_BASE(M5STICKC_BUTTON_A_EVENT_BASE);
+ESP_EVENT_DEFINE_BASE(M5STICKC_BUTTON_B_EVENT_BASE);
 
-m5button_t m5button_a = {
-    .gpio = M5BUTTON_BUTTON_A_GPIO,
-    .debounce_time = M5BUTTON_DEBOUNCE_TIME,
-    .hold_time = M5BUTTON_HOLD_TIME
+m5stickc_button_t m5stickc_button_a = {
+    .gpio = M5STICKC_BUTTON_A_GPIO,
+    .debounce_time = M5STICKC_BUTTON_DEBOUNCE_TIME,
+    .hold_time = M5STICKC_BUTTON_HOLD_TIME
 };
 
-m5button_t m5button_b = {
-    .gpio = M5BUTTON_BUTTON_B_GPIO,
-    .debounce_time = M5BUTTON_DEBOUNCE_TIME,
-    .hold_time = M5BUTTON_HOLD_TIME
+m5stickc_button_t m5stickc_button_b = {
+    .gpio = M5STICKC_BUTTON_B_GPIO,
+    .debounce_time = M5STICKC_BUTTON_DEBOUNCE_TIME,
+    .hold_time = M5STICKC_BUTTON_HOLD_TIME
 };
 
-void IRAM_ATTR m5button_button_isr_handler(void* arg)
+void IRAM_ATTR M5StickCButtonISRHandler(void* arg)
 {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
-    m5button_t * button = (m5button_t *) arg;
+    m5stickc_button_t * button = (m5stickc_button_t *) arg;
 
     if(gpio_get_level(button->gpio) == 0) {
-        xEventGroupSetBitsFromISR(button->event_group, M5BUTTON_BUTTON_PUSH_BIT, &xHigherPriorityTaskWoken);
+        xEventGroupSetBitsFromISR(button->event_group, M5STICKC_BUTTON_PUSH_BIT, &xHigherPriorityTaskWoken);
     } else {
-        xEventGroupSetBitsFromISR(button->event_group, M5BUTTON_BUTTON_POP_BIT, &xHigherPriorityTaskWoken);
+        xEventGroupSetBitsFromISR(button->event_group, M5STICKC_BUTTON_POP_BIT, &xHigherPriorityTaskWoken);
     }
 }
 
-esp_err_t m5button_init()
+esp_err_t M5StickCButtonInit()
 {
     esp_err_t e;
 
-    m5button_a.esp_event_base = M5BUTTON_A_EVENT_BASE;
-    m5button_b.esp_event_base = M5BUTTON_B_EVENT_BASE;
+    m5stickc_button_a.esp_event_base = M5STICKC_BUTTON_A_EVENT_BASE;
+    m5stickc_button_b.esp_event_base = M5STICKC_BUTTON_B_EVENT_BASE;
 
     #define ESP_INTR_FLAG_DEFAULT 0
     e = gpio_install_isr_service(ESP_INTR_FLAG_DEFAULT);
@@ -53,14 +53,14 @@ esp_err_t m5button_init()
         return ESP_FAIL;
     }
 
-    e = m5button_enable(&m5button_a);
+    e = M5StickCButtonEnable(&m5stickc_button_a);
     if(e == ESP_OK) {
         ESP_LOGD(TAG, "Button A enabled");
     } else {
         ESP_LOGE(TAG, "Error enabling button A");
     }
 
-    e += m5button_enable(&m5button_b); // Notice += on error return to accumulate previous error
+    e += M5StickCButtonEnable(&m5stickc_button_b); // Notice += on error return to accumulate previous error
     if(e == ESP_OK) {
         ESP_LOGD(TAG, "Button B enabled");
     } else {
@@ -73,7 +73,7 @@ esp_err_t m5button_init()
     return ESP_OK;
 }
 
-esp_err_t m5button_enable(m5button_t * button)
+esp_err_t M5StickCButtonEnable(m5stickc_button_t * button)
 {
     esp_err_t e;
 
@@ -82,7 +82,7 @@ esp_err_t m5button_enable(m5button_t * button)
     }
 
     // Set gpio as input
-    e = m5button_set_as_input(button);
+    e = M5StickCButtonSetAsInput(button);
     if(e != ESP_OK) {
         return ESP_FAIL;
     }
@@ -100,14 +100,14 @@ esp_err_t m5button_enable(m5button_t * button)
 
     // Start task
     #if defined(CONFIG_SUPPORT_STATIC_ALLOCATION)
-    button->task = xTaskCreateStatic(m5button_task, "button_task", M5BUTTON_TASK_STACK_DEPTH, (void *) button, 20, button->task_stack, &(button->task_buffer));
+    button->task = xTaskCreateStatic(M5StickCButtonTask, "button_task", M5STICKC_BUTTON_TASK_STACK_DEPTH, (void *) button, 20, button->task_stack, &(button->task_buffer));
     if(button->task == NULL) {
         ESP_LOGE(TAG, "Error creating button_task");
         vEventGroupDelete(button->event_group);
         return ESP_FAIL;
     }
     #else
-    BaseType_t r = xTaskCreate(m5button_task, "button_task", M5BUTTON_TASK_STACK_DEPTH, (void *) button, 20, &(button->task));
+    BaseType_t r = xTaskCreate(M5StickCButtonTask, "button_task", M5STICKC_BUTTON_TASK_STACK_DEPTH, (void *) button, 20, &(button->task));
     if(r != pdPASS) {
         ESP_LOGE(TAG, "Error creating button_task");
         vEventGroupDelete(button->event_group);
@@ -122,7 +122,7 @@ esp_err_t m5button_enable(m5button_t * button)
     }
 
     // Enable interrupt
-    e = m5button_enable_interrupt(button);
+    e = M5StickCButtonEnableInterrupt(button);
     if(e != ESP_OK) {
         vTaskDelete(button->task);
         return ESP_FAIL;
@@ -131,7 +131,7 @@ esp_err_t m5button_enable(m5button_t * button)
     return ESP_OK;
 }
 
-esp_err_t m5button_disable(m5button_t * button)
+esp_err_t M5StickCButtonDisable(m5stickc_button_t * button)
 {
     if(button == NULL) {
         return ESP_ERR_INVALID_ARG;
@@ -143,7 +143,7 @@ esp_err_t m5button_disable(m5button_t * button)
     return ESP_OK;
 }
 
-esp_err_t m5button_set_as_input(m5button_t * button)
+esp_err_t M5StickCButtonSetAsInput(m5stickc_button_t * button)
 {
     esp_err_t e;
 
@@ -156,11 +156,11 @@ esp_err_t m5button_set_as_input(m5button_t * button)
     return ESP_OK;
 }
 
-esp_err_t m5button_enable_interrupt(m5button_t * button)
+esp_err_t M5StickCButtonEnableInterrupt(m5stickc_button_t * button)
 {
     esp_err_t e;
 
-    e = gpio_isr_handler_add(button->gpio, m5button_button_isr_handler, button);
+    e = gpio_isr_handler_add(button->gpio, M5StickCButtonISRHandler, button);
     if(e != ESP_OK) {
         return e;
     }
@@ -168,34 +168,34 @@ esp_err_t m5button_enable_interrupt(m5button_t * button)
     return ESP_OK;
 }
 
-esp_err_t m5button_disable_interrupt(m5button_t * button)
+esp_err_t M5StickCButtonDisableInterrupt(m5stickc_button_t * button)
 {
     return gpio_isr_handler_remove(button->gpio);
 }
 
-bool m5button_is_pressed(m5button_t * button)
+bool M5StickCButtonIsPressed(m5stickc_button_t * button)
 {
     return (gpio_get_level(button->gpio) == 0) ? true : false;
 }
 
-void m5button_task(void * pvParameter)
+void M5StickCButtonTask(void * pvParameter)
 {
     EventBits_t event;
-    m5button_t * button = (m5button_t *) pvParameter;
+    m5stickc_button_t * button = (m5stickc_button_t *) pvParameter;
 
     ESP_LOGD(TAG, "Button task started");
 
     while(1) {
-        event = xEventGroupWaitBits(button->event_group, M5BUTTON_BUTTON_PUSH_BIT, pdTRUE, pdFALSE, portMAX_DELAY);
-        if((event & M5BUTTON_BUTTON_PUSH_BIT) != 0) {
+        event = xEventGroupWaitBits(button->event_group, M5STICKC_BUTTON_PUSH_BIT, pdTRUE, pdFALSE, portMAX_DELAY);
+        if((event & M5STICKC_BUTTON_PUSH_BIT) != 0) {
             vTaskDelay(button->debounce_time/portTICK_PERIOD_MS);
-            xEventGroupClearBits(button->event_group, M5BUTTON_BUTTON_POP_BIT);
-            event = xEventGroupWaitBits(button->event_group, M5BUTTON_BUTTON_POP_BIT, pdTRUE, pdFALSE, button->hold_time / portTICK_PERIOD_MS);
-            if((event & M5BUTTON_BUTTON_POP_BIT) != 0) {
-                esp_event_post_to(m5_event_loop, button->esp_event_base, M5BUTTON_BUTTON_CLICK_EVENT, NULL, 0, portMAX_DELAY);
+            xEventGroupClearBits(button->event_group, M5STICKC_BUTTON_POP_BIT);
+            event = xEventGroupWaitBits(button->event_group, M5STICKC_BUTTON_POP_BIT, pdTRUE, pdFALSE, button->hold_time / portTICK_PERIOD_MS);
+            if((event & M5STICKC_BUTTON_POP_BIT) != 0) {
+                esp_event_post_to(m5stickc_event_event_loop, button->esp_event_base, M5STICKC_BUTTON_CLICK_EVENT, NULL, 0, portMAX_DELAY);
                 ESP_LOGD(TAG, "BUTTON_CLICK event");
             } else {
-                esp_event_post_to(m5_event_loop, button->esp_event_base, M5BUTTON_BUTTON_HOLD_EVENT, NULL, 0, portMAX_DELAY);
+                esp_event_post_to(m5stickc_event_event_loop, button->esp_event_base, M5STICKC_BUTTON_HOLD_EVENT, NULL, 0, portMAX_DELAY);
                 ESP_LOGD(TAG, "BUTTON_HOLD event");
             }
         }

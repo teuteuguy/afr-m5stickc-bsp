@@ -1,13 +1,5 @@
 menu "M5Stick-C"
 
-config ESP_IDF_VERSION_BEFORE_V3_3
-    bool "Compatible with ESP-IDF older than v3.3"
-    default n
-    help
-        Use backported libraries for versions of ESP-IDF older than v3.3.
-
-        For ESP-IDF v3.3 or newer, this option should not be checked.
-
 menu "AXP192 - DEFAULT Register Init values"
 
 menu "AXP192_10H - EXTEN & DC-DC2 output control"

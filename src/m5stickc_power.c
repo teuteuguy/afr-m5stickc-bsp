@@ -1,13 +1,14 @@
 /**
- * m5power.c
+ * m5stickc_power.c
  *
- * (C) 2019 - Pablo Bacho <pablo@pablobacho.com>
+ * (C) 2020 - Timothee Cruse <timothee.cruse@gmail.com>
  * This code is licensed under the MIT License.
  */
 
-#include "m5power.h"
+#include "m5stickc_power.h"
+#include "wire.h"
 
-static const char *TAG = "m5power";
+static const char *TAG = "m5stickc_power";
 
 #define AXP192_INIT_REG_COUNT 12
 char * axp192_init_register_list_error_messages[AXP192_INIT_REG_COUNT] = {
@@ -126,7 +127,7 @@ uint8_t axp192_init_register_default_list[AXP192_INIT_REG_COUNT * 2] = {
     VOFF_SHUTDOWN_VOLTAGE_SETTING_REG, AXP192_31H, //12
 };
 
-esp_err_t m5power_init(m5power_config_t *config)
+esp_err_t M5StickCPowerInit(m5stickc_power_config_t *config)
 {
     esp_err_t e;
     uint8_t error_count = 0;
@@ -140,7 +141,7 @@ esp_err_t m5power_init(m5power_config_t *config)
 
     for (i = 0; i < AXP192_INIT_REG_COUNT * 2; i += 2)
     {
-        e = m5power_register_write(axp192_init_register_default_list[ i ], axp192_init_register_default_list[ i + 1 ]);
+        e = M5StickCPowerRegisterWrite(axp192_init_register_default_list[ i ], axp192_init_register_default_list[ i + 1 ]);
         if (e != ESP_OK)
         {
             ESP_LOGE(TAG, "error %s", axp192_init_register_list_error_messages[ i / 2 ]);
@@ -165,77 +166,79 @@ esp_err_t m5power_init(m5power_config_t *config)
     }
 }
 
-esp_err_t m5power_register_read(uint8_t register_address, uint8_t *register_content)
+esp_err_t M5StickCPowerRegisterRead(uint8_t register_address, uint8_t *register_content)
 {
-    esp_err_t e;
+    return I2CReadByte(&wire0, AXP192_I2C_ADDR, register_address, register_content);
+    // esp_err_t e;
 
-    // Read register content
-    i2c_cmd_handle_t cmd = i2c_cmd_link_create();
-    if (cmd == NULL)
-    {
-        ESP_LOGE(TAG, "Error creating I2C link");
-        return ESP_ERR_NO_MEM;
-    }
+    // // Read register content
+    // i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+    // if (cmd == NULL)
+    // {
+    //     ESP_LOGE(TAG, "Error creating I2C link");
+    //     return ESP_ERR_NO_MEM;
+    // }
 
-    i2c_master_start(cmd);
-    i2c_master_write_byte(cmd, (AXP192_I2C_ADDR << 1) | I2C_MASTER_WRITE, true);
-    i2c_master_write_byte(cmd, register_address, true);
-    i2c_master_start(cmd);
-    i2c_master_write_byte(cmd, (AXP192_I2C_ADDR << 1) | I2C_MASTER_READ, true);
-    i2c_master_read_byte(cmd, register_content, I2C_MASTER_LAST_NACK);
-    i2c_master_stop(cmd);
-    e = i2c_master_cmd_begin(I2C_NUM_0, cmd, 250 / portTICK_PERIOD_MS);
-    if (e == ESP_OK)
-    {
-        ESP_LOGD(TAG, "Register %#04x content: %#04x", register_address, *register_content);
-    }
-    else
-    {
-        ESP_LOGE(TAG, "Error reading register %#04x: %s", register_address, esp_err_to_name(e));
-        return ESP_FAIL;
-    }
-    i2c_cmd_link_delete(cmd);
+    // i2c_master_start(cmd);
+    // i2c_master_write_byte(cmd, (AXP192_I2C_ADDR << 1) | I2C_MASTER_WRITE, true);
+    // i2c_master_write_byte(cmd, register_address, true);
+    // i2c_master_start(cmd);
+    // i2c_master_write_byte(cmd, (AXP192_I2C_ADDR << 1) | I2C_MASTER_READ, true);
+    // i2c_master_read_byte(cmd, register_content, I2C_MASTER_LAST_NACK);
+    // i2c_master_stop(cmd);
+    // e = i2c_master_cmd_begin(I2C_NUM_0, cmd, 250 / portTICK_PERIOD_MS);
+    // if (e == ESP_OK)
+    // {
+    //     ESP_LOGD(TAG, "Register %#04x content: %#04x", register_address, *register_content);
+    // }
+    // else
+    // {
+    //     ESP_LOGE(TAG, "Error reading register %#04x: %s", register_address, esp_err_to_name(e));
+    //     return ESP_FAIL;
+    // }
+    // i2c_cmd_link_delete(cmd);
 
-    return ESP_OK;
+    // return ESP_OK;
 }
 
-esp_err_t m5power_register_write(uint8_t register_address, uint8_t register_content)
+esp_err_t M5StickCPowerRegisterWrite(uint8_t register_address, uint8_t register_content)
 {
-    esp_err_t e;
+    return I2CWriteByte(&wire0, AXP192_I2C_ADDR, register_address, register_content);
+    // esp_err_t e;
 
-    i2c_cmd_handle_t cmd = i2c_cmd_link_create();
-    if (cmd == NULL)
-    {
-        ESP_LOGE(TAG, "Error creating I2C link");
-        return ESP_ERR_NO_MEM;
-    }
+    // i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+    // if (cmd == NULL)
+    // {
+    //     ESP_LOGE(TAG, "Error creating I2C link");
+    //     return ESP_ERR_NO_MEM;
+    // }
 
-    i2c_master_start(cmd);
-    i2c_master_write_byte(cmd, (AXP192_I2C_ADDR << 1) | I2C_MASTER_WRITE, true);
-    i2c_master_write_byte(cmd, register_address, true);
-    i2c_master_write_byte(cmd, register_content, true);
-    i2c_master_stop(cmd);
-    e = i2c_master_cmd_begin(I2C_NUM_0, cmd, 10 / portTICK_PERIOD_MS);
-    if (e == ESP_OK)
-    {
-        ESP_LOGD(TAG, "Register %#04x set to %#04x", register_address, register_content);
-    }
-    else
-    {
-        ESP_LOGE(TAG, "Error setting register %#04x set to %#04x: %s", register_address, register_content, esp_err_to_name(e));
-        return ESP_FAIL;
-    }
-    i2c_cmd_link_delete(cmd);
+    // i2c_master_start(cmd);
+    // i2c_master_write_byte(cmd, (AXP192_I2C_ADDR << 1) | I2C_MASTER_WRITE, true);
+    // i2c_master_write_byte(cmd, register_address, true);
+    // i2c_master_write_byte(cmd, register_content, true);
+    // i2c_master_stop(cmd);
+    // e = i2c_master_cmd_begin(I2C_NUM_0, cmd, 10 / portTICK_PERIOD_MS);
+    // if (e == ESP_OK)
+    // {
+    //     ESP_LOGD(TAG, "Register %#04x set to %#04x", register_address, register_content);
+    // }
+    // else
+    // {
+    //     ESP_LOGE(TAG, "Error setting register %#04x set to %#04x: %s", register_address, register_content, esp_err_to_name(e));
+    //     return ESP_FAIL;
+    // }
+    // i2c_cmd_link_delete(cmd);
 
-    return ESP_OK;
+    // return ESP_OK;
 }
 
-esp_err_t m5power_register_set_bits(uint8_t register_address, uint8_t bits_to_set)
+esp_err_t M5StickCPowerRegisterSetBits(uint8_t register_address, uint8_t bits_to_set)
 {
     esp_err_t e;
     uint8_t register_content;
 
-    e = m5power_register_read(register_address, &register_content);
+    e = M5StickCPowerRegisterRead(register_address, &register_content);
     if (e != ESP_OK)
     {
         return ESP_FAIL;
@@ -243,7 +246,7 @@ esp_err_t m5power_register_set_bits(uint8_t register_address, uint8_t bits_to_se
 
     register_content |= bits_to_set;
 
-    e = m5power_register_write(register_address, register_content);
+    e = M5StickCPowerRegisterWrite(register_address, register_content);
     if (e != ESP_OK)
     {
         return ESP_FAIL;
@@ -252,12 +255,12 @@ esp_err_t m5power_register_set_bits(uint8_t register_address, uint8_t bits_to_se
     return ESP_OK;
 }
 
-esp_err_t m5power_register_clear_bits(uint8_t register_address, uint8_t bits_to_clear)
+esp_err_t M5StickCPowerRegisterClearBits(uint8_t register_address, uint8_t bits_to_clear)
 {
     esp_err_t e;
     uint8_t register_content;
 
-    e = m5power_register_read(register_address, &register_content);
+    e = M5StickCPowerRegisterRead(register_address, &register_content);
     if (e != ESP_OK)
     {
         return ESP_FAIL;
@@ -265,7 +268,7 @@ esp_err_t m5power_register_clear_bits(uint8_t register_address, uint8_t bits_to_
 
     register_content &= ~bits_to_clear;
 
-    e = m5power_register_write(register_address, register_content);
+    e = M5StickCPowerRegisterWrite(register_address, register_content);
     if (e != ESP_OK)
     {
         return ESP_FAIL;
@@ -274,18 +277,18 @@ esp_err_t m5power_register_clear_bits(uint8_t register_address, uint8_t bits_to_
     return ESP_OK;
 }
 
-esp_err_t m5power_get_vbat(uint16_t *vbat)
+esp_err_t M5StickCPowerGetVbat(uint16_t *vbat)
 {
     esp_err_t e;
     *vbat = 0;
     uint8_t read1, read2;
 
-    e = m5power_register_read(0x78, &read1); // battery voltage LSB buff
+    e = M5StickCPowerRegisterRead(0x78, &read1); // battery voltage LSB buff
     if (e != ESP_OK)
     {
         return ESP_FAIL;
     }
-    e = m5power_register_read(0x79, &read2); // battery voltage MSB buff
+    e = M5StickCPowerRegisterRead(0x79, &read2); // battery voltage MSB buff
     if (e != ESP_OK)
     {
         return ESP_FAIL;
@@ -298,18 +301,18 @@ esp_err_t m5power_get_vbat(uint16_t *vbat)
     return ESP_OK;
 }
 
-esp_err_t m5power_get_vaps(uint16_t *vaps)
+esp_err_t M5StickCPowerGetVaps(uint16_t *vaps)
 {
     esp_err_t e;
     *vaps = 0;
     uint8_t read1, read2;
 
-    e = m5power_register_read(0x7E, &read1); // APS voltage LSB buff
+    e = M5StickCPowerRegisterRead(0x7E, &read1); // APS voltage LSB buff
     if (e != ESP_OK)
     {
         return ESP_FAIL;
     }
-    e = m5power_register_read(0x7F, &read2); // APS voltage MSB buff
+    e = M5StickCPowerRegisterRead(0x7F, &read2); // APS voltage MSB buff
     if (e != ESP_OK)
     {
         return ESP_FAIL;
@@ -322,25 +325,25 @@ esp_err_t m5power_get_vaps(uint16_t *vaps)
     return ESP_OK;
 }
 
-esp_err_t m5power_set_sleep(void)
+esp_err_t M5StickCPowerSetSleep(void)
 {
     esp_err_t e;
     uint8_t read1;
 
-    e = m5power_register_read(VOFF_SHUTDOWN_VOLTAGE_SETTING_REG, &read1); // VOFF_SHUTDOWN_VOLTAGE_SETTING_REG
+    e = M5StickCPowerRegisterRead(VOFF_SHUTDOWN_VOLTAGE_SETTING_REG, &read1); // VOFF_SHUTDOWN_VOLTAGE_SETTING_REG
     if (e != ESP_OK)
     {
         return ESP_FAIL;
     }
 
     read1 = (1 << 3) | read1;
-    e = m5power_register_write(VOFF_SHUTDOWN_VOLTAGE_SETTING_REG, read1); // VOFF_SHUTDOWN_VOLTAGE_SETTING_REG
+    e = M5StickCPowerRegisterWrite(VOFF_SHUTDOWN_VOLTAGE_SETTING_REG, read1); // VOFF_SHUTDOWN_VOLTAGE_SETTING_REG
     if (e != ESP_OK)
     {
         return ESP_FAIL;
     }
 
-    e = m5power_register_write(DCDC1_DCDC3_LDO2_LDO3_SWITCH_CONTROL_REG, 0x01); // DCDC1_DCDC3_LDO2_LDO3_SWITCH_CONTROL_REG
+    e = M5StickCPowerRegisterWrite(DCDC1_DCDC3_LDO2_LDO3_SWITCH_CONTROL_REG, 0x01); // DCDC1_DCDC3_LDO2_LDO3_SWITCH_CONTROL_REG
     if (e != ESP_OK)
     {
         return ESP_FAIL;
