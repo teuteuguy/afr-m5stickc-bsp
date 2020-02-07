@@ -1,5 +1,5 @@
 /**
- * m5stickc.c - ESP-IDF component to work with M5
+ * m5stickc.c - ESP-IDF component to work with M5StickC
  *
  * (C) 2020 - Timothee Cruse <timothee.cruse@gmail.com>
  * This code is licensed under the MIT License.
