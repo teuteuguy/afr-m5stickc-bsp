@@ -92,7 +92,7 @@ esp_err_t M5StickCMPU6886GetTempData( float *t );
 esp_err_t M5StickCMPU6886SetGyroFsr( enum Gscale scale );
 esp_err_t M5StickCMPU6886SetAccelFsr( enum Ascale scale );
 
-void M5StickCMPU6886GetAhrsData( float *pitch, float *roll, float *yaw );
+esp_err_t M5StickCMPU6886GetAhrsData( float *pitch, float *roll, float *yaw );
 esp_err_t M5StickCMPU6886SetFIFOEnable( bool );
 esp_err_t M5StickCMPU6886ReadFIFO( uint8_t * rd_data );
 esp_err_t M5StickCMPU6886ReadFIFOCount( uint16_t * rd_data );

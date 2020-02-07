@@ -8,6 +8,7 @@
 #include "m5stickc_mpu6886.h"
 #include "m5stickc_power.h"
 #include "wire.h"
+#include "MahonyAHRS.h"
 
 static const char * TAG = "m5stickc_mpu6886";
 
@@ -277,6 +278,34 @@ esp_err_t M5StickCMPU6886GetTempData(float *t)
     esp_err_t e = M5StickCMPU6886GetTempAdc(&temp);
 
     *t = (float)temp / 326.8 + 25.0;
+
+    return e;
+}
+
+esp_err_t M5StickCMPU6886GetAhrsData(float *pitch, float *roll, float *yaw)
+{
+    esp_err_t e;
+
+    float accX = 0; 
+    float accY = 0;
+    float accZ = 0;
+
+    float gyroX = 0;
+    float gyroY = 0;
+    float gyroZ = 0;
+
+
+    e = M5StickCMPU6886GetGyroData(&gyroX, &gyroY, &gyroZ);
+    if (e != ESP_OK) {
+        return e;
+    }
+    e = M5StickCMPU6886GetAccelData(&accX, &accY, &accZ);
+    if (e != ESP_OK) {
+        return e;
+    }
+
+    float deg_to_rad = 0.017453292519943295769236907684886f;
+    MahonyAHRSupdateIMU(gyroX * deg_to_rad, gyroY * deg_to_rad, gyroZ * deg_to_rad, accX, accY, accZ, pitch, roll, yaw);
 
     return e;
 }
