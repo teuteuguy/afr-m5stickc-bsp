@@ -22,7 +22,7 @@ Clone repository in your `components` folder in your project and include `m5stic
 
 Call `M5StickCInit()` to initialize your M5StickC. This initializes the AXP192 power manager chip, the display and the push buttons.
 
-This component creates a custom event loop called `m5stickc_event_event_loop` for device events. User program can subscribe to it and listen to events such as "button click" and "button hold". More actions coming. Check out .h files for specific module events.
+This component creates a custom event loop called `m5stickc_event_loop` for device events. User program can subscribe to it and listen to events such as "button click" and "button hold". More actions coming. Check out .h files for specific module events.
 
 Use `M5StickCDisplaySetBacklightLevel(uint8_t backlight_level)` to set the backlight level on the display. Backlight range between 0 and 7. To turn on or off the backlight, use `M5StickCDisplayOn()` and `M5StickCDisplayOff()`.
 

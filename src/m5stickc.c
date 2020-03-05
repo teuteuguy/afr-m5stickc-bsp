@@ -9,7 +9,7 @@
 
 static const char *TAG = "m5stickc";
 
-esp_event_loop_handle_t m5stickc_event_event_loop;
+esp_event_loop_handle_t m5stickc_event_loop;
 
 esp_err_t M5StickCInit(m5stickc_config_t * config) {
     esp_err_t e;

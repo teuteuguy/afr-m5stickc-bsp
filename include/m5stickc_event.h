@@ -15,7 +15,7 @@ extern "C" {
 #include "esp_log.h"
 #include "esp_event.h"
 
-extern esp_event_loop_handle_t m5stickc_event_event_loop;   /*!< Event loop for M5 device-specific events */
+extern esp_event_loop_handle_t m5stickc_event_loop;   /*!< Event loop for M5 device-specific events */
 
 esp_err_t M5StickCEventInit();
 

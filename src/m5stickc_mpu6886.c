@@ -63,7 +63,7 @@ esp_err_t M5StickCMPU6886Init()
         }
         else
         {
-            ESP_LOGI(TAG, "0x%02X 0x%02X", mpu6886_init_register_default_list[ i ], mpu6886_init_register_default_list[ i + 1 ]);
+            ESP_LOGD(TAG, "0x%02X 0x%02X", mpu6886_init_register_default_list[ i ], mpu6886_init_register_default_list[ i + 1 ]);
         }
         
     }

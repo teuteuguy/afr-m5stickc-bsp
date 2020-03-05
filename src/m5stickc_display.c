@@ -133,7 +133,7 @@ esp_err_t M5StickCDisplayTimeout(uint32_t timeout)
 {
     esp_err_t e;
 
-    e = esp_event_handler_register_with(m5stickc_event_event_loop, M5STICKC_BUTTON_A_EVENT_BASE, ESP_EVENT_ANY_ID, M5StickCDisplayEventHandler, NULL);
+    e = esp_event_handler_register_with(m5stickc_event_loop, M5STICKC_BUTTON_A_EVENT_BASE, ESP_EVENT_ANY_ID, M5StickCDisplayEventHandler, NULL);
     if(e == ESP_OK) {
         ESP_LOGD(TAG, "[ OK ] Registered for event BUTTON_A_CLICK");
     } else {
@@ -141,7 +141,7 @@ esp_err_t M5StickCDisplayTimeout(uint32_t timeout)
         return ESP_FAIL;
     }
 
-    e = esp_event_handler_register_with(m5stickc_event_event_loop, M5STICKC_BUTTON_B_EVENT_BASE, ESP_EVENT_ANY_ID, M5StickCDisplayEventHandler, NULL);
+    e = esp_event_handler_register_with(m5stickc_event_loop, M5STICKC_BUTTON_B_EVENT_BASE, ESP_EVENT_ANY_ID, M5StickCDisplayEventHandler, NULL);
     if(e == ESP_OK) {
         ESP_LOGD(TAG, "[ OK ] Registered for event BUTTON_B_CLICK");
     } else {

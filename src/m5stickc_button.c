@@ -192,10 +192,10 @@ void M5StickCButtonTask(void * pvParameter)
             xEventGroupClearBits(button->event_group, M5STICKC_BUTTON_POP_BIT);
             event = xEventGroupWaitBits(button->event_group, M5STICKC_BUTTON_POP_BIT, pdTRUE, pdFALSE, button->hold_time / portTICK_PERIOD_MS);
             if((event & M5STICKC_BUTTON_POP_BIT) != 0) {
-                esp_event_post_to(m5stickc_event_event_loop, button->esp_event_base, M5STICKC_BUTTON_CLICK_EVENT, NULL, 0, portMAX_DELAY);
+                esp_event_post_to(m5stickc_event_loop, button->esp_event_base, M5STICKC_BUTTON_CLICK_EVENT, NULL, 0, portMAX_DELAY);
                 ESP_LOGD(TAG, "BUTTON_CLICK event");
             } else {
-                esp_event_post_to(m5stickc_event_event_loop, button->esp_event_base, M5STICKC_BUTTON_HOLD_EVENT, NULL, 0, portMAX_DELAY);
+                esp_event_post_to(m5stickc_event_loop, button->esp_event_base, M5STICKC_BUTTON_HOLD_EVENT, NULL, 0, portMAX_DELAY);
                 ESP_LOGD(TAG, "BUTTON_HOLD event");
             }
         }
